@@ -1,4 +1,48 @@
 ﻿@page
 @model NET_Project_Server.Web.Pages.RegisterModel
 @{
+    ViewData["Title"] = "Register page";
 }
+<div class="text-left mb-2">
+    <h1 class="mystyle">Please fill you details below</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" autocomplete="on">
+
+            <div class="form-group mb-3">
+                <label class="control-label">First Name</label>
+                <input class="form-control" type="text" name="Name" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label">ID</label>
+                <input class="form-control" type="text" name="ID" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label">Phone number</label>
+                <input class="form-control" type="text" name="Phone" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label">Country</label>
+                <select class="form-control" name="Country">
+                    <option value="">Select a country</option>
+                    <option value="USA">United States</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Germany">Germany</option>
+                    <option value="France">France</option>
+                    <option value="Israel">Israel</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" autofocus />
+            </div>
+        </form>
+    </div>
+</div>
