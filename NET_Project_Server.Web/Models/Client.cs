@@ -11,7 +11,7 @@ namespace NET_Project_Server.Web.Models
         [Required]
         public int? ID { get; set; }
 
-        [StringLength(60, MinimumLength = 10, ErrorMessage = "Minimum must be 10 chars")]
+        [Phone]
         public string? Phone { get; set; }
         public string? Country { get; set; }
     }

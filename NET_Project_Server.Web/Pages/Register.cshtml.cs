@@ -217,6 +217,12 @@ namespace NET_Project_Server.Web.Pages
             
         }
 
+        public bool DoesClientIdExist(int? id)
+        {
+            // Check if the client with the specified ID exists
+            return _context.Client.Any(client => client.ID == id);
+        }
+
 
         [BindProperty]
         public Models.Client client { get; set; } = default!;
@@ -230,10 +236,17 @@ namespace NET_Project_Server.Web.Pages
             { 
                 string? selectedCountry = SelectedCountry;
                 client.Country = selectedCountry;
-                List<string?> list = new List<string?>() { client.Name, client.ID.ToString(), client.Phone, client.Country };
-                _context.Client.Add(client);
-                _context.SaveChangesAsync();
-                return RedirectToPage("Clients/Index");
+
+                if (!DoesClientIdExist(client.ID))
+                {
+                    _context.Client.Add(client);
+                    _context.SaveChangesAsync();
+                    return RedirectToPage("Clients/Index");
+                }
+                else 
+                {
+                    ModelState.AddModelError("client.ID", "A Client with this ID already exists.");
+                }
             }
             return Page();
         }
