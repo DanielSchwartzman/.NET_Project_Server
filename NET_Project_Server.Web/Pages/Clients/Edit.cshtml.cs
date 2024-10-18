@@ -1,11 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using NET_Project_Server.Web.Data;
 using NET_Project_Server.Web.Models;
-using System;
 
-namespace NET_Project_Server.Web.Pages
+namespace NET_Project_Server.Web.Pages.Clients
 {
-    public class RegisterModel : PageModel
+    public class EditModel : PageModel
     {
         public List<string> countries = new List<string> {
     "Afghanistan",
@@ -204,38 +211,74 @@ namespace NET_Project_Server.Web.Pages
     "Zimbabwe"
 };
 
+        int? idSave;
+
         private readonly NET_Project_Server.Web.Data.NET_Project_ServerWebContext _context;
 
-        public RegisterModel(NET_Project_Server.Web.Data.NET_Project_ServerWebContext context)
+        public EditModel(NET_Project_Server.Web.Data.NET_Project_ServerWebContext context)
         {
             _context = context;
         }
 
-
-        public void OnGet()
-        {
-            
-        }
-
-
         [BindProperty]
-        public Models.Client client { get; set; } = default!;
+        public Models.Client Client { get; set; } = default!;
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var client =  await _context.Client.FirstOrDefaultAsync(m => m.ID == id);
+            idSave = client.ID;
+            if (client == null)
+            {
+                return NotFound();
+            }
+            Client = client;
+            return Page();
+        }
 
         [BindProperty]
         public string? SelectedCountry { get; set; } = default!;
 
-        public IActionResult OnPost()
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more information, see https://aka.ms/RazorPagesCRUD.
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid) 
-            { 
-                string? selectedCountry = SelectedCountry;
-                client.Country = selectedCountry;
-                List<string?> list = new List<string?>() { client.Name, client.ID.ToString(), client.Phone, client.Country };
-                _context.Client.Add(client);
-                _context.SaveChangesAsync();
-                return RedirectToPage("Clients/Index");
+            string? selectedCountry = SelectedCountry;
+            Client.Country = selectedCountry;
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
             }
-            return Page();
+
+            _context.Attach(Client).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClientExists(Client.ID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToPage("./Index");
+        }
+
+        private bool ClientExists(int? id)
+        {
+            return _context.Client.Any(e => e.ID == id);
         }
     }
 }
