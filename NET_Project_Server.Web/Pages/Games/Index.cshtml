@@ -154,13 +154,15 @@
             }
             else if (Model.SelectedQuery == "Query27")
             {
-                <th>Game Count</th>
                 <th>Players</th>
+                <th>Game Count</th>
             }
             else if (Model.SelectedQuery == "Query28")
             {
+                <th>Name</th>
+                <th>Phone</th>
                 <th>Country</th>
-                <th>Players</th>
+                <th>Game Count</th>
             }
             else if (Model.SelectedQuery == "Query29")
             {
@@ -233,28 +235,25 @@
             foreach (var group in Model.PlayersGroupedByGames)
             {
                 <tr>
-                    <td data-label="Game Count">@group.GameCount</td>
                     <td data-label="Players">
                         @foreach (var player in group.Players)
                         {
                             @player.Name @(player != group.Players.Last() ? ", " : "")
                         }
                     </td>
+                    <td data-label="Game Count">@group.GameCount</td>
                 </tr>
             }
         }
         else if (Model.SelectedQuery == "Query28")
         {
-            foreach (var group in Model.PlayersGroupedByCountry)
+            foreach (var group in Model.PlayersGroupedByGames)
             {
                 <tr>
-                    <td data-label="Country">@group.Country</td>
-                    <td data-label="Players">
-                        @foreach (var player in group.Players)
-                        {
-                            @player.Name @(player != group.Players.Last() ? ", " : "")
-                        }
-                    </td>
+                    <td data-label="Name">@group.Players[0].Name</td>
+                    <td data-label="Phone">@group.Players[0].Phone</td>
+                    <td data-label="Country">@group.Players[0].Country</td>
+                    <td data-label="Game Count">@group.GameCount</td>
                 </tr>
             }
         }

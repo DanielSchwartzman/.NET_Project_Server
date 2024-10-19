@@ -94,13 +94,13 @@ namespace NET_Project_Server.Web.Pages.Games
             string clientName = SelectedPlayerName;
             SelectedQuery = "Query26";
             PlayersWithGameCount = await _context.Client
-    .Where(c => c.Name.ToLower() == clientName.ToLower()) // Case-insensitive comparison
-    .Select(c => new PlayerWithGameCount
-    {
-        Name = c.Name,
-        GameCount = _context.Games.Count(g => g.Pid == c.ID)
-    })
-    .ToListAsync();
+            .Where(c => c.Name.ToLower() == clientName.ToLower()) // Case-insensitive comparison
+            .Select(c => new PlayerWithGameCount
+            {
+            Name = c.Name,
+            GameCount = _context.Games.Count(g => g.Pid == c.ID)
+            })
+            .ToListAsync();
             return Page();
         }
 
@@ -151,25 +151,29 @@ namespace NET_Project_Server.Web.Pages.Games
             else if (SelectedQuery == "Query27")
             {
                 PlayersGroupedByGames = await _context.Client
-                    .GroupBy(c => c.ID)
-                    .Select(g => new PlayerGroupedByGames
-                    {
-                        GameCount = g.Count(),
-                        Players = g.ToList()
-                    })
-                    .ToListAsync();
+                .Join(_context.Games, c => c.ID, g => g.Pid, (c, g) => new { c, g })
+                .GroupBy(x => x.c.ID)
+                .Select(g => new PlayerGroupedByGames
+                {
+                    GameCount = g.Count(),
+                    Players = g.Select(x => x.c).Distinct().ToList()
+                })
+                .ToListAsync();
             }
 
             else if (SelectedQuery == "Query28")
             {
-                PlayersGroupedByCountry = await _context.Client
-                    .GroupBy(c => c.Country)
-                    .Select(g => new PlayerGroupedByCountry
-                    {
-                        Country = g.Key,
-                        Players = g.ToList()
-                    })
-                    .ToListAsync();
+                PlayersGroupedByGames = await _context.Client
+                .GroupJoin(_context.Games, c => c.ID, g => g.Pid, (c, games) => new { c, games })
+                .SelectMany(x => x.games.DefaultIfEmpty(), (x, g) => new { x.c, g })
+                .GroupBy(x => x.c.ID)
+                .Select(g => new PlayerGroupedByGames
+                {
+                    GameCount = g.Count(x => x.g != null), // Count only non-null games
+                    Players = g.Select(x => x.c).Distinct().ToList()
+                })
+                .OrderByDescending(pg => pg.GameCount) // Order by GameCount descending
+                .ToListAsync();
             }
 
             else if (SelectedQuery == "Query29")
