@@ -1,0 +1,267 @@
+﻿@page
+@model NET_Project_Server.Web.Pages.Games.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Select Data to View</h2>
+
+<!-- Form to select which query to display -->
+<form method="post" asp-page-handler="Form1">
+    <label for="querySelector">Choose data to display:</label>
+    <select id="querySelector" name="query">
+        <option value="Query22">Query 22</option>
+        <option value="Query23">Query 23</option>
+        <option value="Query24">Query 24</option>
+        <option value="Query25">Query 25</option>
+        <option value="Query26">Query 26</option>
+        <option value="Query27">Query 27</option>
+        <option value="Query28">Query 28</option>
+        <option value="Query29">Query 29</option>
+    </select>
+    <button type="submit">Show Data</button>
+</form>
+
+<script>
+    // Get the selected query from Razor model
+    var selectedQuery = '@Model.SelectedQuery';
+
+    // Set the selected option in the dropdown
+    document.addEventListener('DOMContentLoaded', function() {
+        var querySelector = document.getElementById('querySelector');
+        querySelector.value = selectedQuery; // Set the dropdown value to the selected query
+    });
+</script>
+
+<style>
+    /* Table styling */
+    table {
+        width: 100%; /* Full width */
+        border-collapse: separate; /* Allows for spacing */
+        border-spacing: 0; /* No spacing between cells */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Adds shadow for depth */
+        margin: 20px 0; /* Adds margin around the table */
+        border-radius: 8px; /* Rounded corners */
+        overflow: hidden; /* Ensures rounded corners apply */
+    }
+
+    th {
+        background-color: #4CAF50; /* Header background color */
+        color: white; /* Text color */
+        padding: 12px; /* Padding inside header */
+        text-align: left; /* Align text to the left */
+    }
+
+    td {
+        padding: 10px; /* Padding inside cells */
+        border-bottom: 1px solid #ddd; /* Bottom border for rows */
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2; /* Light gray for even rows */
+    }
+
+    tr:hover {
+        background-color: #ddd; /* Gray background on hover */
+    }
+
+    /* Responsive design */
+    @@media (max-width: 600px) {
+        table, thead, tbody, th, td, tr {
+            display: block; /* Stack elements on small screens */
+        }
+
+        th {
+            display: none; /* Hide headers in mobile view */
+        }
+
+        tr {
+            margin-bottom: 10px; /* Space between rows */
+            border: 1px solid #ddd; /* Border around each row */
+            border-radius: 8px; /* Rounded corners for rows */
+            background-color: white; /* Background for rows */
+        }
+
+        td {
+            text-align: right; /* Align text to the right */
+            position: relative; /* Position relative for label */
+        }
+
+        td::before {
+            content: attr(data-label); /* Create a label from the attribute */
+            position: absolute; /* Absolute positioning */
+            left: 10px; /* Spacing from the left */
+            width: 50%; /* Half width */
+            text-align: left; /* Align left */
+            font-weight: bold; /* Bold text */
+            color: #4CAF50; /* Match header color */
+        }
+    }
+</style>
+
+<div>
+    @if (Model.SelectedQuery == "Query22")
+    {
+        <form method="post" asp-page-handler="Form2">
+            <button type="submit" value="Query22Sort">Sort Ascending Case insensetive</button>
+        </form>
+    }
+    @if (Model.SelectedQuery == "Query26")
+    {
+        
+    }
+</div>
+
+<!-- Single table structure, dynamically populated based on query selection -->
+<table>
+    <thead>
+        <tr>
+            @if (Model.SelectedQuery == "Query22")
+            {
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Country</th>
+            }
+            else if (Model.SelectedQuery == "Query23")
+            {
+                <th>Name</th>
+                <th>Last Game Date</th>
+            }
+            else if (Model.SelectedQuery == "Query24")
+            {
+                <th>Game ID</th>
+                <th>Player ID</th>
+                <th>Winner</th>
+                <th>Date</th>
+            }
+            else if (Model.SelectedQuery == "Query25")
+            {
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Country</th>
+            }
+            else if (Model.SelectedQuery == "Query26")
+            {
+                <th>Name</th>
+                <th>Game Count</th>
+            }
+            else if (Model.SelectedQuery == "Query27")
+            {
+                <th>Game Count</th>
+                <th>Players</th>
+            }
+            else if (Model.SelectedQuery == "Query28")
+            {
+                <th>Country</th>
+                <th>Players</th>
+            }
+            else if (Model.SelectedQuery == "Query29")
+            {
+                <th>Country</th>
+                <th>Players</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.SelectedQuery == "Query22")
+        {
+            foreach (var player in Model.AllPlayers)
+            {
+                <tr>
+                    <td data-label="Name">@player.Name</td>
+                    <td data-label="Phone">@player.Phone</td>
+                    <td data-label="Country">@player.Country</td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query23")
+        {
+            foreach (var player in Model.PlayersWithLastGame)
+            {
+                <tr>
+                    <td data-label="Name">@player.Name</td>
+                    <td data-label="Last Game Date">@player.LastGameDate.ToShortDateString()</td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query24")
+        {
+            foreach (var game in Model.AllGames)
+            {
+                <tr>
+                    <td data-label="Game ID">@game.Gid</td>
+                    <td data-label="Player ID">@game.Pid</td>
+                    <td data-label="Winner">@(game.Winner ? "Yes" : "No")</td>
+                    <td data-label="Date">@game.Date.ToShortDateString()</td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query25")
+        {
+            foreach (var player in Model.FirstPlayersByCountry)
+            {
+                <tr>
+                    <td data-label="Name">@player.Name</td>
+                    <td data-label="Phone">@player.Phone</td>
+                    <td data-label="Country">@player.Country</td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query26")
+        {
+            foreach (var player in Model.PlayersWithGameCount)
+            {
+                <tr>
+                    <td data-label="Name">@player.Name</td>
+                    <td data-label="Game Count">@player.GameCount</td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query27")
+        {
+            foreach (var group in Model.PlayersGroupedByGames)
+            {
+                <tr>
+                    <td data-label="Game Count">@group.GameCount</td>
+                    <td data-label="Players">
+                        @foreach (var player in group.Players)
+                        {
+                            @player.Name @(player != group.Players.Last() ? ", " : "")
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query28")
+        {
+            foreach (var group in Model.PlayersGroupedByCountry)
+            {
+                <tr>
+                    <td data-label="Country">@group.Country</td>
+                    <td data-label="Players">
+                        @foreach (var player in group.Players)
+                        {
+                            @player.Name @(player != group.Players.Last() ? ", " : "")
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else if (Model.SelectedQuery == "Query29")
+        {
+            foreach (var group in Model.PlayersGroupedByCountry)
+            {
+                <tr>
+                    <td data-label="Country">@group.Country</td>
+                    <td data-label="Players">
+                        @foreach (var player in group.Players)
+                        {
+                            @player.Name @(player != group.Players.Last() ? ", " : "")
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

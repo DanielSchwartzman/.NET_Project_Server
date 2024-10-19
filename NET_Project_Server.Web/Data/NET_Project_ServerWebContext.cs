@@ -15,5 +15,6 @@ namespace NET_Project_Server.Web.Data
         }
 
         public DbSet<NET_Project_Server.Web.Models.Client> Client { get; set; } = default!;
+        public DbSet<NET_Project_Server.Web.Models.Game> Games { get; set; } = default!;
     }
 }
