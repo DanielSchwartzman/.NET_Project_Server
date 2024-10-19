@@ -25,6 +25,11 @@ namespace NET_Project_Server.Web.Pages.Games
         public IList<Client> AllPlayers { get; set; }
         public IList<PlayerWithGameDate> PlayersWithLastGame { get; set; }
         public IList<Game> AllGames { get; set; }
+
+        public IList<String?> AllPlayerNames { get; set; }
+
+        [BindProperty]
+        public string SelectedPlayerName { get; set; }
         public IList<Client> FirstPlayersByCountry { get; set; }
         public IList<PlayerWithGameCount> PlayersWithGameCount { get; set; }
         public IList<PlayerGroupedByGames> PlayersGroupedByGames { get; set; }
@@ -78,6 +83,27 @@ namespace NET_Project_Server.Web.Pages.Games
             return Page();
         }
 
+        public async Task<IActionResult> OnPostForm3Async()
+        {
+            AllPlayerNames = await _context.Client
+                    .Select(c => c.Name)
+                    .Distinct()
+                    .OrderBy(n => n.ToLower())
+                    .ToListAsync();
+
+            string clientName = SelectedPlayerName;
+            SelectedQuery = "Query26";
+            PlayersWithGameCount = await _context.Client
+    .Where(c => c.Name.ToLower() == clientName.ToLower()) // Case-insensitive comparison
+    .Select(c => new PlayerWithGameCount
+    {
+        Name = c.Name,
+        GameCount = _context.Games.Count(g => g.Pid == c.ID)
+    })
+    .ToListAsync();
+            return Page();
+        }
+
         private async Task LoadData()
         {
             if (SelectedQuery == "Query22")
@@ -115,13 +141,10 @@ namespace NET_Project_Server.Web.Pages.Games
 
             else if (SelectedQuery == "Query26")
             {
-                PlayersWithGameCount = await _context.Client
-                    .GroupBy(c => c.ID)
-                    .Select(g => new PlayerWithGameCount
-                    {
-                        Name = g.First().Name,
-                        GameCount = g.Count()
-                    })
+                AllPlayerNames = await _context.Client
+                    .Select(c => c.Name)
+                    .Distinct()
+                    .OrderBy(n => n.ToLower())
                     .ToListAsync();
             }
 

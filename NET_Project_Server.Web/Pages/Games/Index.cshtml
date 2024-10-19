@@ -8,7 +8,7 @@
 <h2>Select Data to View</h2>
 
 <!-- Form to select which query to display -->
-<form method="post" asp-page-handler="Form1">
+<form method="post" asp-page-handler="Form1" class="form-group mb-3">
     <label for="querySelector">Choose data to display:</label>
     <select id="querySelector" name="query">
         <option value="Query22">Query 22</option>
@@ -109,7 +109,13 @@
     }
     @if (Model.SelectedQuery == "Query26")
     {
-        
+        <form method="post" asp-page-handler="Form3">
+            <div class="form-group mb-3">
+                <label for="NameSelector">Select a player to find:</label>
+                @Html.DropDownList("SelectedPlayerName", new SelectList(Model.AllPlayerNames))
+            </div>
+            <button type="submit" class="btn btn-primary form-group mb-3" autofocus> Find </button>
+        </form>
     }
 </div>
 
@@ -210,13 +216,17 @@
         }
         else if (Model.SelectedQuery == "Query26")
         {
-            foreach (var player in Model.PlayersWithGameCount)
-            {
-                <tr>
-                    <td data-label="Name">@player.Name</td>
-                    <td data-label="Game Count">@player.GameCount</td>
-                </tr>
-            }
+            if (Model.PlayersWithGameCount != null)
+                if (Model.PlayersWithGameCount.Any())
+                {
+                    foreach (var player in Model.PlayersWithGameCount)
+                    {
+                        <tr>
+                            <td data-label="Name">@player.Name</td>
+                            <td data-label="Game Count">@player.GameCount</td>
+                        </tr>
+                    }
+                }
         }
         else if (Model.SelectedQuery == "Query27")
         {
