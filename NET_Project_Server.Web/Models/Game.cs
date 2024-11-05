@@ -9,5 +9,6 @@ namespace NET_Project_Server.Web.Models
         public int? Pid { get; set; }
         public bool Winner { get; set; }
         public DateTime Date { get; set; }
+        public int Duration { get; set; }
     }
 }
